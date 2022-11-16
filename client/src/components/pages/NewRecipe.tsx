@@ -1,92 +1,154 @@
-import React from "react";
+import React, { Component } from "react";
 
-const NewRecipe = () => {
-  return (
-    <div className="container">
-      <h1 className="text-center">New Recipe</h1>
-      <div>
-        <form className="container form" action="">
-          <div className="form-group  col-md-6 m-auto my-3">
-            <label htmlFor="difficulty" className="form-control d-none">
-              Recipe Name
-            </label>
-            <input
-              type="text"
-              name="difficulty"
-              id="difficulty"
-              placeholder="Recipe Name"
-              className="form-control"
-            />
-          </div>
-          <div className="form-group  col-md-6 m-auto my-3">
-            <label htmlFor="servingSize" className="form-control d-none">
-              Recipe Name
-            </label>
-            <input
-              type="text"
-              name="servingSize"
-              id="servingsize"
-              placeholder="Serving size"
-              className="form-control"
-            />
-          </div>
-          <div className="form-group  col-md-6 m-auto my-3">
-            <label htmlFor="cookTime" className="form-control d-none">
-              Recipe Name
-            </label>
-            <input
-              type="text"
-              name="cookTime"
-              id="cookTime"
-              placeholder="Recipe Name"
-              className="form-control"
-            />
-          </div>
-          <div className="form-group  col-md-6 m-auto my-3">
-            <label htmlFor="difficulty" className="form-control d-none">
-              Recipe Name
-            </label>
-            <input
-              type="text"
-              name="difficulty"
-              id="difficulty"
-              placeholder="Dificulty"
-              className="form-control"
-            />
-          </div>
-          <div className="form-group  col-md-6 m-auto my-3">
-            <label htmlFor="ingredients" className="form-control d-none">
-              Recipe Name
-            </label>
-            <p className="mb-0">
-              Enter ingredient and quantity then click add ingredient
-            </p>
-            <div className="row row-cols-2">
-              <div>
-                <input
-                  type="text"
-                  name="ingredients"
-                  id="ingredients"
-                  placeholder="ingredient"
-                  className="form-control"
-                />
-              </div>
-              <div>
-                <input
-                  type="text"
-                  name="quantity"
-                  id="quantity"
-                  placeholder="quantity"
-                  className="form-control"
-                />
-              </div>
-            </div>
-            <button className="btn btn-dark mt-2">Add Ingredient</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
+type myState = {
+    // sets value of myState
+    RecipeName: string;
+    RecipeDescription: string;
+    RecipeIngredients: string;
+    RecipeInstructions: string;
+    RecipeDifficulty: string;
+    RecipeImage: string;
+    RecipeCookTime: string;
+    RecipeServingSize: string;
 };
+export class NewRecipe extends Component<any, myState> {
+    // eslint-disable-next-line @typescript-eslint/no-useless-constructor
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            RecipeName: "",
+            RecipeDescription: "",
+            RecipeIngredients: "",
+            RecipeInstructions: "",
+            RecipeDifficulty: "",
+            RecipeImage: "",
+            RecipeCookTime: "",
+            RecipeServingSize: "",
+        };
+    }
+
+    // handleChange method
+    handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+        this.setState({ [name]: value } as unknown as Pick<
+            myState,
+            keyof myState
+        >);
+    };
+
+    // onSubmit()
+    onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const {
+            RecipeName,
+            RecipeDescription,
+            RecipeIngredients,
+            RecipeInstructions,
+            RecipeDifficulty,
+            RecipeImage,
+            RecipeCookTime,
+            RecipeServingSize,
+        } = this.state;
+        const recipe = {
+            RecipeName,
+            RecipeDescription,
+            RecipeIngredients,
+            RecipeInstructions,
+            RecipeDifficulty,
+            RecipeImage,
+            RecipeCookTime,
+            RecipeServingSize,
+        };
+        fetch("http://localhost:8080/recipes", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(recipe),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("Success:", data);
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+    };
+
+    render() {
+        return (
+            <div>
+                <h1>New Recipe</h1>
+                <form onSubmit={this.onSubmit}>
+                    <label htmlFor="RecipeName">Recipe Name</label>
+                    <input
+                        type="text"
+                        name="RecipeName"
+                        id="RecipeName"
+                        onChange={this.handleChange}
+                        value={this.state.RecipeName}
+                    />
+                    <label htmlFor="RecipeDescription">
+                        Recipe Description
+                    </label>
+                    <input
+                        type="text"
+                        name="RecipeDescription"
+                        id="RecipeDescription"
+                        onChange={this.handleChange}
+                        value={this.state.RecipeDescription}
+                    />
+                    <label htmlFor="RecipeIngredients">
+                        Recipe Ingredients
+                    </label>
+                    <input
+                        type="text"
+                        name="RecipeIngredients"
+                        id="RecipeIngredients"
+                        onChange={this.handleChange}
+                        value={this.state.RecipeIngredients}
+                    />
+                    <label htmlFor="RecipeInstructions">
+                        Recipe Instructions
+                    </label>
+                    <input
+                        type="text"
+                        name="RecipeInstructions"
+                        id="RecipeInstructions"
+                        onChange={this.handleChange}
+                        value={this.state.RecipeInstructions}
+                    />
+                    <label htmlFor="RecipeDifficulty">Recipe Difficulty</label>
+                    <input
+                        type="text"
+                        name="RecipeDifficulty"
+                        id="RecipeDifficulty"
+                        onChange={this.handleChange}
+                        value={this.state.RecipeDifficulty}
+                    />
+                    <label htmlFor="RecipeCookTime">Recipe Cook Time</label>
+                    <input
+                        type="text"
+                        name="RecipeCookTime"
+                        id="RecipeCookTime"
+                        onChange={this.handleChange}
+                        value={this.state.RecipeCookTime}
+                    />
+                    <label htmlFor="RecipeServingSize">
+                        Recipe Serving Size
+                    </label>
+                    <input
+                        type="text"
+                        name="RecipeServingSize"
+                        id="RecipeServingSize"
+                        onChange={this.handleChange}
+                        value={this.state.RecipeServingSize}
+                    />
+                    <button className="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        );
+    }
+}
 
 export default NewRecipe;

@@ -1,32 +1,62 @@
-import React from "react";
-import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./components/pages/Home";
 import NewRecipe from "./components/pages/NewRecipe";
 import Navbar from "./components/layout/Navbar";
 import "./App.css";
 import RecipeInfo from "./components/pages/RecipeInfo";
+import { useEffect, useState } from "react";
 
 function App() {
-  const testRecipe = [
-    { name: 2, desc: "test" },
-    { name: 2, desc: "test2" },
-    { name: 3, desc: "test3" },
-    { name: 4, desc: "test4" },
-  ];
+    const apiUrl = "http://localhost:8080/recipes";
 
-  return (
-    <Router>
-      <div className="App">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home recipe={testRecipe} />} />
-          <Route path="/new-recipe" element={<NewRecipe />} />
-          <Route path="/view-recipe/:id" element={<RecipeInfo />} />
-        </Routes>
-      </div>
-    </Router>
-  );
+    const [recipes, setRecipes]: any = useState([]);
+    const [recipeData, setRecipeData] = useState([]);
+
+    // const testRecipe = [
+    //   { name: 2, desc: "test" },
+    //   { name: 2, desc: "test2" },
+    //   { name: 3, desc: "test3" },
+    //   { name: 4, desc: "test4" },
+    // ];
+
+    function useRecipeData(r: []) {
+        setRecipeData(r);
+        console.log(r);
+    }
+
+    useEffect(() => {
+        fetch(apiUrl)
+            .then((res) => res.json())
+            .then((data) => {
+                setRecipes(data);
+            });
+    }, []);
+
+    console.log(recipes);
+
+    return (
+        <Router>
+            <div className="App">
+                <Navbar />
+                <Routes>
+                    <Route
+                        path="/"
+                        element={
+                            <Home
+                                recipe={recipes}
+                                getRecipeData={useRecipeData}
+                            />
+                        }
+                    />
+                    <Route path="/new-recipe" element={<NewRecipe />} />
+                    <Route
+                        path="/view-recipe/:id"
+                        element={<RecipeInfo data={recipeData} />}
+                    />
+                </Routes>
+            </div>
+        </Router>
+    );
 }
 
 export default App;
