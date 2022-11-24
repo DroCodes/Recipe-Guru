@@ -12,13 +12,6 @@ function App() {
     const [recipes, setRecipes]: any = useState([]);
     const [recipeData, setRecipeData] = useState([]);
 
-    // const testRecipe = [
-    //   { name: 2, desc: "test" },
-    //   { name: 2, desc: "test2" },
-    //   { name: 3, desc: "test3" },
-    //   { name: 4, desc: "test4" },
-    // ];
-
     function useRecipeData(r: []) {
         setRecipeData(r);
         console.log(r);

@@ -28,7 +28,7 @@ const Home = (props: { recipe: []; getRecipeData: any }) => {
             </form>
             <div id="recipe-list">
                 {/* map function that maps out recipe */}
-                {props.recipe.map((item: any, index) => (
+                {props.recipe.map((item: any, index: number) => (
                     <Link
                         to={"view-recipe/" + item.RecipeName}
                         className="d-flex flex-column justify-content-center align-items-center w-100"

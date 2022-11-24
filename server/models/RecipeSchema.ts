@@ -6,7 +6,7 @@ interface IRecipe {
     RecipeIngredients: { ingrediendName: String; ingrediendQuantity: Number }[];
     RecipeInstructions: String;
     RecipeDifficulty: String;
-    // RecipeImage: String;
+    RecipeImage: String;
     RecipeCookTime: String;
     RecipeServingSize: String;
 }
@@ -17,7 +17,7 @@ const recipeSchema = new Schema<IRecipe>({
     RecipeIngredients: { type: [], required: true },
     RecipeInstructions: { type: String, required: true },
     RecipeDifficulty: { type: String, required: true },
-    // RecipeImage: { type: String, required: true },
+    RecipeImage: { type: String, required: true },
     RecipeCookTime: { type: String, required: true },
     RecipeServingSize: { type: String, required: true },
 });
