@@ -1,12 +1,11 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
-const Home = (props: { recipe: []; getRecipeData: any }) => {
+const Home = (props: { recipe: []; getRecipeData: any; imgURL: string }) => {
+    const { recipe, getRecipeData, imgURL } = props;
     useEffect(() => {
         localStorage.removeItem("recipes");
+        localStorage.removeItem("img");
     }, []);
 
     return (
@@ -28,17 +27,27 @@ const Home = (props: { recipe: []; getRecipeData: any }) => {
             </form>
             <div id="recipe-list">
                 {/* map function that maps out recipe */}
-                {props.recipe.map((item: any, index: number) => (
+                {recipe.map((item: any, index: number) => (
                     <Link
                         to={"view-recipe/" + item.RecipeName}
                         className="d-flex flex-column justify-content-center align-items-center w-100"
-                        onClick={() => props.getRecipeData(item)}
+                        onClick={() => getRecipeData(item)}
                     >
                         <div
-                            className="recipe custom-card col-12 col-sm-8 col-md-8 col-lg-6"
+                            className="recipe d-flex custom-card col-12 col-sm-8 col-md-8 col-lg-6"
                             key={index}
                         >
-                            <h2>{item.RecipeName}</h2>
+                            <div>
+                                <h2>{item.RecipeName}</h2>
+                                <img
+                                    src={
+                                        imgURL + "/" + item.RecipeName + ".jpg"
+                                    }
+                                    alt={item.RecipeName}
+                                    height="200px"
+                                    width="200px"
+                                />
+                            </div>
                             <p>{item.RecipeDescription}</p>
                         </div>
                     </Link>

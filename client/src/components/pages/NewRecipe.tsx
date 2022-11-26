@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 
 type myState = {
-    // sets value of myState
     RecipeName: string;
     RecipeDescription: string;
     RecipeIngredients: string;
@@ -9,11 +8,10 @@ type myState = {
     RecipeDifficulty: string;
     RecipeCookTime: string;
     RecipeServingSize: string;
-    RecipeImage: string;
+    RecipeImage: any;
 };
 export class NewRecipe extends Component<any, myState> {
-    // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-    constructor(props: any) {
+    constructor(props: {}) {
         super(props);
         this.state = {
             RecipeName: "",
@@ -23,11 +21,10 @@ export class NewRecipe extends Component<any, myState> {
             RecipeDifficulty: "",
             RecipeCookTime: "",
             RecipeServingSize: "",
-            RecipeImage: "",
+            RecipeImage: null,
         };
     }
 
-    // handleChange method
     handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
         this.setState({ [name]: value } as unknown as Pick<
@@ -36,82 +33,56 @@ export class NewRecipe extends Component<any, myState> {
         >);
     };
 
-    // on submit method
-    handleUpload(event: any) {
+    fileOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const target = event.target as HTMLInputElement;
+        const files = target.files![0];
+        this.setState({ RecipeImage: files });
+    };
+
+    onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const data = new FormData();
-        data.append("file", this.state.RecipeImage);
-        data.append("RecipeName", this.state.RecipeName);
-        data.append("RecipeDescription", this.state.RecipeDescription);
-        data.append("RecipeIngredients", this.state.RecipeIngredients);
-        data.append("RecipeInstructions", this.state.RecipeInstructions);
-        data.append("RecipeDifficulty", this.state.RecipeDifficulty);
-        data.append("RecipeCookTime", this.state.RecipeCookTime);
-        data.append("RecipeServingSize", this.state.RecipeServingSize);
-        data.append("RecipeImage", this.state.RecipeImage);
+        const {
+            RecipeName,
+            RecipeDescription,
+            RecipeIngredients,
+            RecipeInstructions,
+            RecipeDifficulty,
+            RecipeCookTime,
+            RecipeServingSize,
+        } = this.state;
+
+        const recipe = {
+            RecipeName,
+            RecipeDescription,
+            RecipeIngredients,
+            RecipeInstructions,
+            RecipeDifficulty,
+            RecipeCookTime,
+            RecipeServingSize,
+        };
+
         fetch("http://localhost:8080/recipes", {
             method: "POST",
-            body: data,
-        }).then((response) => {
-            response.json().then((body) => {
-                this.setState({ RecipeName: body.RecipeName });
-                this.setState({ RecipeDescription: body.RecipeDescription });
-                this.setState({ RecipeIngredients: body.RecipeIngredients });
-                this.setState({ RecipeInstructions: body.RecipeInstructions });
-                this.setState({ RecipeDifficulty: body.RecipeDifficulty });
-                this.setState({ RecipeCookTime: body.RecipeCookTime });
-                this.setState({ RecipeServingSize: body.RecipeServingSize });
-                this.setState({ RecipeImage: body.RecipeImage });
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(recipe),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("Success:", data);
+            })
+            .catch((error) => {
+                console.error("Error:", error);
             });
-            console.log(response);
-        });
-    }
-
-    // onSubmit()
-    // onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    //     event.preventDefault();
-    //     const {
-    //         RecipeName,
-    //         RecipeDescription,
-    //         RecipeIngredients,
-    //         RecipeInstructions,
-    //         RecipeDifficulty,
-    //         RecipeCookTime,
-    //         RecipeServingSize,
-    //         RecipeImage,
-    //     } = this.state;
-    //     const recipe = {
-    //         RecipeName,
-    //         RecipeDescription,
-    //         RecipeIngredients,
-    //         RecipeInstructions,
-    //         RecipeDifficulty,
-    //         RecipeImage,
-    //         RecipeCookTime,
-    //         RecipeServingSize,
-    //     };
-    //     fetch("http://localhost:8080/recipes", {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //         },
-    //         body: JSON.stringify(recipe),
-    //     })
-    //         .then((response) => response.json())
-    //         .then((data) => {
-    //             console.log("Success:", data);
-    //         })
-    //         .catch((error) => {
-    //             console.error("Error:", error);
-    //         });
-    // };
+    };
 
     render() {
         return (
             <div>
                 <h1>New Recipe</h1>
                 <form
-                    onSubmit={this.handleUpload}
+                    onSubmit={this.onSubmit}
                     action="/uploadfile"
                     method="POST"
                     encType="multipart/form-data"
@@ -184,10 +155,29 @@ export class NewRecipe extends Component<any, myState> {
                         type="file"
                         id="imageUpload"
                         name="recipeImage"
-                        onChange={this.handleChange}
-                        value={this.state.RecipeImage}
+                        onChange={this.fileOnChange}
                     />
-                    <button className="btn btn-primary">Submit</button>
+                    <button
+                        className="btn btn-primary"
+                        onClick={() => {
+                            let formData = new FormData();
+
+                            formData.append(
+                                "recipeImage",
+                                this.state.RecipeImage
+                            );
+                            formData.append(
+                                "RecipeName",
+                                this.state.RecipeName
+                            );
+                            fetch("http://localhost:8080/uploadFile", {
+                                method: "POST",
+                                body: formData,
+                            });
+                        }}
+                    >
+                        Submit
+                    </button>
                 </form>
             </div>
         );

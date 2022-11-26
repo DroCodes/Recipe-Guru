@@ -1,20 +1,20 @@
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./components/pages/Home";
 import NewRecipe from "./components/pages/NewRecipe";
 import Navbar from "./components/layout/Navbar";
-import "./App.css";
 import RecipeInfo from "./components/pages/RecipeInfo";
-import { useEffect, useState } from "react";
+import "./App.css";
 
 function App() {
     const apiUrl = "http://localhost:8080/recipes";
 
     const [recipes, setRecipes]: any = useState([]);
     const [recipeData, setRecipeData] = useState([]);
+    const imgURL = "http://localhost:8080/static/";
 
     function useRecipeData(r: []) {
         setRecipeData(r);
-        console.log(r);
     }
 
     useEffect(() => {
@@ -24,8 +24,6 @@ function App() {
                 setRecipes(data);
             });
     }, []);
-
-    console.log(recipes);
 
     return (
         <Router>
@@ -37,6 +35,7 @@ function App() {
                         element={
                             <Home
                                 recipe={recipes}
+                                imgURL={imgURL}
                                 getRecipeData={useRecipeData}
                             />
                         }
@@ -44,7 +43,7 @@ function App() {
                     <Route path="/new-recipe" element={<NewRecipe />} />
                     <Route
                         path="/view-recipe/:id"
-                        element={<RecipeInfo data={recipeData} />}
+                        element={<RecipeInfo data={recipeData} img={imgURL} />}
                     />
                 </Routes>
             </div>

@@ -1,23 +1,19 @@
 import { useEffect, useState } from "react";
-import image from "../../images/deborah-rainford-zOlZgELBMRg-unsplash.jpg";
 
-const RecipeInfo = (props: { data: any }) => {
+const RecipeInfo = (props: { data: any; img: string }) => {
+    const { data, img } = props;
     const [recipe, setRecipe] = useState(
         !localStorage.getItem("recipes")
-            ? props.data
+            ? data
             : JSON.parse(localStorage.getItem("recipes")!)
     );
 
     useEffect(() => {
         const data = localStorage.getItem("recipes");
-        if (data === null)
+        if (data === null) {
             localStorage.setItem("recipes", JSON.stringify(recipe));
+        }
     }, [recipe]);
-
-    // useEffect(() => {
-    //     const data = localStorage.getItem("recipes");
-    //     if (data !== null && recipe !== null) setRecipe(JSON.parse(data));
-    // }, []);
 
     return (
         <div className="container">
@@ -27,7 +23,7 @@ const RecipeInfo = (props: { data: any }) => {
                 <div className="row">
                     <div className="container col-md-6">
                         <img
-                            src={image}
+                            src={img + recipe.RecipeName + ".jpg"}
                             alt="recipe"
                             className="img-fluid d-block"
                             height="400"
