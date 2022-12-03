@@ -3,7 +3,8 @@ import React, { Component } from "react";
 type myState = {
     RecipeName: string;
     RecipeDescription: string;
-    RecipeIngredients: string;
+    RecipeIngredients: { IngredientName: string; IngredientQuantity: string }[];
+    // RecipeIngredientQuantity: [];
     RecipeInstructions: string;
     RecipeDifficulty: string;
     RecipeCookTime: string;
@@ -16,7 +17,8 @@ export class NewRecipe extends Component<any, myState> {
         this.state = {
             RecipeName: "",
             RecipeDescription: "",
-            RecipeIngredients: "",
+            RecipeIngredients: [{ IngredientName: "", IngredientQuantity: "" }],
+            // RecipeIngredientQuantity: [],
             RecipeInstructions: "",
             RecipeDifficulty: "",
             RecipeCookTime: "",
@@ -24,6 +26,38 @@ export class NewRecipe extends Component<any, myState> {
             RecipeImage: null,
         };
     }
+    ingredientArray = [{ IngredientName: "", IngredientQuantity: "" }];
+    ingredientName = "";
+    ingredientquantity = "";
+
+    handleIngredientNameChange = (event: any) => {
+        this.ingredientName = event.target.value;
+
+        console.log("name " + this.ingredientName);
+    };
+
+    handleIngredientQuantityChange = (event: any) => {
+        this.ingredientquantity = event.target.value;
+
+        console.log("quantity " + this.ingredientquantity);
+    };
+
+    onIngredientSubmit = (event: any) => {
+        event.preventDefault();
+        this.ingredientArray.push({
+            IngredientName: this.ingredientName,
+            IngredientQuantity: this.ingredientquantity,
+        });
+        console.log(this.ingredientArray);
+
+        this.setState({
+            RecipeIngredients: this.ingredientArray,
+        });
+        for (let recipe of this.state.RecipeIngredients) {
+            console.log("name " + recipe.IngredientName);
+            console.log("quantity " + recipe.IngredientQuantity);
+        }
+    };
 
     handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -105,16 +139,28 @@ export class NewRecipe extends Component<any, myState> {
                         onChange={this.handleChange}
                         value={this.state.RecipeDescription}
                     />
-                    <label htmlFor="RecipeIngredients">
-                        Recipe Ingredients
-                    </label>
+                    <label htmlFor="IngredientName">Recipe Ingredients</label>
                     <input
                         type="text"
-                        name="RecipeIngredients"
-                        id="RecipeIngredients"
-                        onChange={this.handleChange}
-                        value={this.state.RecipeIngredients}
+                        name="IngredientName"
+                        id="IngredientName"
+                        onChange={this.handleIngredientNameChange}
+                        // value={this.state.RecipeIngredients}
                     />
+                    <label htmlFor="IngredientQuantity">Recipe Quantity</label>
+                    <input
+                        type="text"
+                        name="IngredientQuantity"
+                        id="IngredientQuantity"
+                        onChange={this.handleIngredientQuantityChange}
+                        // value={this.state.RecipeIngredients}
+                    />
+                    <button
+                        className="btn btn-dark"
+                        onClick={(event) => this.onIngredientSubmit(event)}
+                    >
+                        Add Ingredient
+                    </button>
                     <label htmlFor="RecipeInstructions">
                         Recipe Instructions
                     </label>
