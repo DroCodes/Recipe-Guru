@@ -1,11 +1,45 @@
 import { useEffect, useState } from "react";
 
 const RecipeInfo = (props: { data: any; img: string }) => {
+    const [ingredientCollapsed, setIngredientCollapsed] = useState(true);
+    const [instructionsCollapsed, setInstructionsCollapsed] = useState(true);
     const { data, img } = props;
     const [recipe, setRecipe] = useState(
         !localStorage.getItem("recipes")
             ? data
             : JSON.parse(localStorage.getItem("recipes")!)
+    );
+    const [servingAdjustment, setServingAdjustment] = useState(1);
+
+    const ingredientList = (
+        <div>
+            <h3>Ingredients</h3>
+            <ul>
+                {recipe.RecipeIngredients.map((item: any, index: any) =>
+                    item.IngredientName !== "" ? (
+                        <li key={index}>
+                            {item.IngredientName} -{" "}
+                            {parseInt(item.IngredientQuantity) *
+                                servingAdjustment}
+                        </li>
+                    ) : null
+                )}
+            </ul>
+        </div>
+    );
+
+    const instructionsList = (
+        <div>
+            <h3>Instructions</h3>
+            <ol>
+                {/* {recipe.RecipeInstructions.map((item: any, index: any) =>
+                    item.Instruction !== "" ? (
+                        <li key={index}>{item.Instruction}</li>
+                    ) : null
+                )} */}
+                <li>{recipe.RecipeInstructions}</li>
+            </ol>
+        </div>
     );
 
     useEffect(() => {
@@ -15,10 +49,21 @@ const RecipeInfo = (props: { data: any; img: string }) => {
         }
     }, [recipe]);
 
+    const onServingAdjustmentChange = () => {
+        const servingSize = document.getElementById(
+            "servingSize"
+        ) as HTMLSelectElement;
+        const servingSizeValue = servingSize.value;
+        if (servingSizeValue === "") {
+            setServingAdjustment(1);
+        } else {
+            setServingAdjustment(parseFloat(servingSizeValue));
+        }
+    };
+
     return (
         <div className="container">
             <h1 className="text-center">Recipe Info</h1>
-            {/* two divs for image and description */}
             <div id="recipeHeading" className="row row-cols-2">
                 <div className="row">
                     <div className="container col-md-6">
@@ -26,53 +71,78 @@ const RecipeInfo = (props: { data: any; img: string }) => {
                             src={img + recipe.RecipeName + ".jpg"}
                             alt="recipe"
                             className="img-fluid d-block"
-                            height="400"
-                            width="400"
+                            height="300"
+                            width="300"
                         />
                     </div>
                 </div>
                 <div className="container">
-                    <h3 className="text-center">{recipe.RecipeName}</h3>
+                    <h2 className="">{recipe.RecipeName}</h2>
+                    <h4>Description</h4>
                     <p id="description" className="m-auto">
                         {recipe.RecipeDescription}
                     </p>
                     <div className="">
-                        <h5>{recipe.RecipeServingSize}</h5>
-                        <div className="row row-cols-2">
+                        <h5>{recipe.RecipeServingSize * servingAdjustment}</h5>
+                        <div>
                             <label
                                 className="d-none"
                                 htmlFor="servingAdjustment"
                             >
                                 Change serving size
                             </label>
-                            <select name="servingAdjustment" id="servingSize">
-                                <option value="">Select One</option>
-                                <option value="half">1/2</option>
-                                <option value="double">2</option>
+                            <select
+                                name="servingAdjustment"
+                                id="servingSize"
+                                onChange={onServingAdjustmentChange}
+                            >
+                                <option>Serving Size</option>
+                                <option value="1">Regular</option>
+                                <option value=".5">Half</option>
+                                <option value="2">double</option>
                             </select>
                             <div>
-                                <p id="prepTime">{recipe.RecipeCookTime}</p>
+                                <p id="prepTime">
+                                    Cook Time-
+                                    <span>
+                                        {recipe.RecipeCookTime *
+                                            servingAdjustment}{" "}
+                                        Minutes
+                                    </span>
+                                </p>
                             </div>
                             <div>
                                 <p id="difficulty">{recipe.RecipeDifficulty}</p>
                             </div>
                         </div>
                     </div>
+                    <div className="m-2">
+                        <button
+                            className="btn btn-success"
+                            onClick={() =>
+                                ingredientCollapsed
+                                    ? setIngredientCollapsed(false)
+                                    : setIngredientCollapsed(true)
+                            }
+                        >
+                            Ingredients
+                        </button>
+                        {!ingredientCollapsed ? ingredientList : null}
+                    </div>
+                    <div className="m-2">
+                        <button
+                            className="btn btn-success"
+                            onClick={() =>
+                                instructionsCollapsed
+                                    ? setInstructionsCollapsed(false)
+                                    : setInstructionsCollapsed(true)
+                            }
+                        >
+                            Instructions
+                        </button>
+                        {!instructionsCollapsed ? instructionsList : null}
+                    </div>
                 </div>
-            </div>
-            <div>
-                <h3>Ingredients</h3>
-                <ul>
-                    {recipe.RecipeIngredients.map((item: any, index: any) => (
-                        <li key={index}>{item}</li>
-                    ))}
-                </ul>
-            </div>
-            <div>
-                <h3>Instructions</h3>
-                <ul>
-                    <li>{recipe.RecipeInstructions}</li>
-                </ul>
             </div>
         </div>
     );

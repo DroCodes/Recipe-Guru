@@ -4,7 +4,6 @@ type myState = {
     RecipeName: string;
     RecipeDescription: string;
     RecipeIngredients: { IngredientName: string; IngredientQuantity: string }[];
-    // RecipeIngredientQuantity: [];
     RecipeInstructions: string;
     RecipeDifficulty: string;
     RecipeCookTime: string;
@@ -18,7 +17,6 @@ export class NewRecipe extends Component<any, myState> {
             RecipeName: "",
             RecipeDescription: "",
             RecipeIngredients: [{ IngredientName: "", IngredientQuantity: "" }],
-            // RecipeIngredientQuantity: [],
             RecipeInstructions: "",
             RecipeDifficulty: "",
             RecipeCookTime: "",
@@ -32,14 +30,10 @@ export class NewRecipe extends Component<any, myState> {
 
     handleIngredientNameChange = (event: any) => {
         this.ingredientName = event.target.value;
-
-        console.log("name " + this.ingredientName);
     };
 
     handleIngredientQuantityChange = (event: any) => {
         this.ingredientquantity = event.target.value;
-
-        console.log("quantity " + this.ingredientquantity);
     };
 
     onIngredientSubmit = (event: any) => {
@@ -48,15 +42,10 @@ export class NewRecipe extends Component<any, myState> {
             IngredientName: this.ingredientName,
             IngredientQuantity: this.ingredientquantity,
         });
-        console.log(this.ingredientArray);
 
         this.setState({
             RecipeIngredients: this.ingredientArray,
         });
-        for (let recipe of this.state.RecipeIngredients) {
-            console.log("name " + recipe.IngredientName);
-            console.log("quantity " + recipe.IngredientQuantity);
-        }
     };
 
     handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
